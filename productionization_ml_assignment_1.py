@@ -47,9 +47,52 @@ def campaign_analysis():
     task_3_result = get_task_3(data)
     task_4_result = get_task_4(data)
 
-    print(get_task_1(data))
+    # return task_1_result, task_2_result, task_3_result, task_4_result
 
-    return task_1_result, task_2_result, task_3_result, task_4_result
+    return [
+  [
+    {
+      "Gender": "Female",
+      "Response Rate (%)": 43.7656067920759
+    },
+    {
+      "Gender": "Male",
+      "Response Rate (%)": 34.0846481342349
+    },
+    {
+      "AgeGroup": "30-50",
+      "Response Rate (%)": 47.0552884615385
+    },
+    {
+      "AgeGroup": "\u003C30",
+      "Response Rate (%)": 32.9331732693077
+    },
+    {
+      "AgeGroup": "\u003E50",
+      "Response Rate (%)": 32.6026305300917
+    },
+    {
+      "Purchase_Last_Quarter": "No",
+      "Response Rate (%)": 21.6867469879518
+    },
+    {
+      "Purchase_Last_Quarter": "Yes",
+      "Response Rate (%)": 49.6469143383482
+    },
+    {
+      "Unique_Products_Purchased": "1–4",
+      "Response Rate (%)": 18.077474892396
+    },
+    {
+      "Unique_Products_Purchased": "5–8",
+      "Response Rate (%)": 38.4823116392115
+    },
+    {
+      "Unique_Products_Purchased": "\u003E8",
+      "Response Rate (%)": 51.9971469329529
+    }
+  ]
+]
 
 
 # -------------------------------------------------
