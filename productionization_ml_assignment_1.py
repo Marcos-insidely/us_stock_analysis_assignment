@@ -12,26 +12,26 @@ def get_task_1(data):
     response_gender = data.groupby('Gender')['responded_bool'].mean().reset_index()
     response_gender['Response Rate (%)'] = response_gender['responded_bool'] * 100
     response_gender = response_gender[['Gender', 'Response Rate (%)']]
-    return response_gender
+    return response_gender.to_dict(orient='records')
 
 def get_task_2(data):
     response_age = data.groupby('AgeGroup')['responded_bool'].mean().reset_index()
     response_age['Response Rate (%)'] = response_age['responded_bool'] * 100
     response_age = response_age[['AgeGroup', 'Response Rate (%)']]
-    return response_age
+    return response_age.to_dict(orient='records')
 
 def get_task_3(data):
     response_purchased = data.groupby('Purchase_Last_Quarter')['responded_bool'].mean().reset_index()
     response_purchased['Response Rate (%)'] = response_purchased['responded_bool'] * 100
     response_purchased = response_purchased[['Purchase_Last_Quarter', 'Response Rate (%)']]
-    return response_purchased
+    return response_purchased.to_dict(orient='records')
 
 def get_task_4(data):
     bins = [0.99, 4, 8, np.inf]
     labels = ["1–4", "5–8", ">8"]
     product_segments = pd.cut(data["Unique_Products_Purchased"], bins=bins, labels=labels)
     summary_table = data.groupby(product_segments, observed=False)["responded_bool"].mean() * 100
-    return summary_table.reset_index(name="Response Rate (%)")
+    return summary_table.reset_index(name="Response Rate (%)").to_dict(orient='records')
 
 
 # Convert 'yes'/'no' into a boolean True/False (handles mixed casing too)
@@ -46,6 +46,8 @@ def campaign_analysis():
     task_2_result = get_task_2(data)
     task_3_result = get_task_3(data)
     task_4_result = get_task_4(data)
+
+    print(get_task_1(data))
 
     return task_1_result, task_2_result, task_3_result, task_4_result
 
@@ -107,21 +109,28 @@ def home():
                         const tablesContainer = document.querySelector('#summaryTables');
                         tablesContainer.innerHTML = '';
 
+                        const taskNames = [
+                            'Response rate by gender',
+                            'Response rate by age group',
+                            'Response rate by purchase history',
+                            'Response rate by product segment'
+                        ];
+
                         data.forEach((taskResult, taskIndex) => {
+                            if (!taskResult.length) {
+                                return;
+                            }
+
                             const table = document.createElement('table');
-                            const headers = Object.keys(taskResult);
-                            const rowKeys = headers.length ? Object.keys(taskResult[headers[0]]) : [];
-                            const rows = rowKeys.map(rowKey => Object.fromEntries(
-                                headers.map(header => [header, taskResult[header][rowKey]])
-                            ));
+                            const headers = Object.keys(taskResult[0]);
 
                             table.innerHTML = `
-                                <caption>Task ${taskIndex + 1}</caption>
+                                <caption>${taskNames[taskIndex]}</caption>
                                 <thead>
                                     <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
                                 </thead>
                                 <tbody>
-                                    ${rows.map(row => `
+                                    ${taskResult.map(row => `
                                         <tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>
                                     `).join('')}
                                 </tbody>
