@@ -47,12 +47,15 @@ def campaign_analysis():
     task_3_result = get_task_3(data)
     task_4_result = get_task_4(data)
 
-    return {
-        "task_1": task_1_result,
-        "task_2": task_2_result,
-        "task_3": task_3_result,
-        "task_4": task_4_result,
-    }
+    return [
+        {"task": "task_1", **row} for row in task_1_result
+    ] + [
+        {"task": "task_2", **row} for row in task_2_result
+    ] + [
+        {"task": "task_3", **row} for row in task_3_result
+    ] + [
+        {"task": "task_4", **row} for row in task_4_result
+    ]
 
 
 # -------------------------------------------------
@@ -119,13 +122,18 @@ def home():
                             'Response rate by product segment'
                         ];
 
-                        Object.entries(data).forEach(([taskKey, taskResult], taskIndex) => {
+                        const taskGroups = data.reduce((groups, row) => {
+                            (groups[row.task] ??= []).push(row);
+                            return groups;
+                        }, {});
+
+                        Object.entries(taskGroups).forEach(([taskKey, taskResult], taskIndex) => {
                             if (!taskResult.length) {
                                 return;
                             }
 
                             const table = document.createElement('table');
-                            const headers = Object.keys(taskResult[0]);
+                            const headers = Object.keys(taskResult[0]).filter(header => header !== 'task');
 
                             table.innerHTML = `
                                 <caption>${taskNames[taskIndex]}</caption>
